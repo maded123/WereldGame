@@ -217,8 +217,8 @@ class MinisterieVanEconomischeZakenApp(QWidget):
             self.table.clearContents()
 
     def load_random_image_and_name(self):
-        # Kies een willekeurige afbeelding uit de map "gezichten"
-        image_folder = "gezichten"
+        # Kies een willekeurige afbeelding uit de map "Gezichten"
+        image_folder = os.path.join(os.path.dirname(__file__), 'Gezichten')
         images = [f for f in os.listdir(image_folder) if os.path.isfile(os.path.join(image_folder, f))]
 
         if images:
@@ -307,6 +307,222 @@ class MinisterieVanEconomischeZakenApp(QWidget):
             return f"{value:.2f} jaar"
         else:
             return str(value)
+
+
+class MinisterieVanDefensieApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Ministerie van Defensie')
+        self.setGeometry(100, 100, 1000, 600)
+        main_layout = QHBoxLayout(self)
+        left_layout = QVBoxLayout()
+        self.input_field = QLineEdit(self)
+        self.input_field.setPlaceholderText("Voer de naam van een land in")
+        self.input_field.returnPressed.connect(self.update_data)
+        left_layout.addWidget(self.input_field)
+        self.country_label = QLabel("Gekozen land: ", self)
+        self.country_label.setStyleSheet("font-weight: bold; font-size: 11pt;")
+        left_layout.addWidget(self.country_label)
+        self.table = QTableWidget(self)
+        self.table.setColumnCount(0)
+        self.table.setRowCount(0)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        self.table.verticalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        left_layout.addWidget(self.table)
+        main_layout.addLayout(left_layout)
+        self.setLayout(main_layout)
+
+    def update_data(self):
+        country_name = self.input_field.text()
+        self.country_label.setText(f"Gekozen land: {country_name}")
+        indicators = [
+            ("Militaire Uitgaven (% van BBP)", "MS.MIL.XPND.GD.ZS"),
+            ("Aantal Militairen (per 1000 inwoners)", "MS.MIL.TOTL.P1"),
+            ("Wapens Import (miljoen US$)", "MS.MIL.MPRT.KD"),
+        ]
+        data = self.get_defense_data(country_name, indicators)
+        self.table.setColumnCount(2)
+        self.table.setRowCount(len(indicators))
+        self.table.setHorizontalHeaderLabels(['Indicator', 'Waarde'])
+        for i, (label, _) in enumerate(indicators):
+            indicator_item = QTableWidgetItem(label)
+            indicator_item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(i, 0, indicator_item)
+            value_item = QTableWidgetItem(data.get(label, "N/A"))
+            value_item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(i, 1, value_item)
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+        self.table.horizontalHeader().setStretchLastSection(False)
+        self.table.verticalHeader().setStretchLastSection(False)
+
+    def get_defense_data(self, country_name, indicators):
+        try:
+            import world_bank_data as wb
+            countries = wb.get_countries()
+            df = countries[['region', 'name']].rename(columns={'name': 'country'}).loc[countries.region != 'Aggregates']
+            data = {}
+            for label, code in indicators:
+                series = wb.get_series(code, id_or_value='id', simplify_index=True, mrv=1)
+                df[label] = series
+            country_data = df[df['country'].str.lower() == country_name.lower()]
+            for label, _ in indicators:
+                if not country_data.empty:
+                    value = country_data.iloc[0][label]
+                    data[label] = f"{value:.2f}" if not pd.isna(value) else "N/A"
+                else:
+                    data[label] = "N/A"
+            return data
+        except Exception:
+            return {label: "N/A" for label, _ in indicators}
+
+
+class MinisterieVanLandbouwApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Ministerie van Landbouw')
+        self.setGeometry(100, 100, 1000, 600)
+        main_layout = QHBoxLayout(self)
+        left_layout = QVBoxLayout()
+        self.input_field = QLineEdit(self)
+        self.input_field.setPlaceholderText("Voer de naam van een land in")
+        self.input_field.returnPressed.connect(self.update_data)
+        left_layout.addWidget(self.input_field)
+        self.country_label = QLabel("Gekozen land: ", self)
+        self.country_label.setStyleSheet("font-weight: bold; font-size: 11pt;")
+        left_layout.addWidget(self.country_label)
+        self.table = QTableWidget(self)
+        self.table.setColumnCount(0)
+        self.table.setRowCount(0)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        self.table.verticalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        left_layout.addWidget(self.table)
+        main_layout.addLayout(left_layout)
+        self.setLayout(main_layout)
+
+    def update_data(self):
+        country_name = self.input_field.text()
+        self.country_label.setText(f"Gekozen land: {country_name}")
+        indicators = [
+            ("Landbouw Productie Index", "AG.PRD.FOOD.XD"),
+            ("Landbouw (% van BBP)", "NV.AGR.TOTL.ZS"),
+            ("Werkgelegenheid in Landbouw (% van Totale Werkgelegenheid)", "SL.AGR.EMPL.ZS"),
+        ]
+        data = self.get_agriculture_data(country_name, indicators)
+        self.table.setColumnCount(2)
+        self.table.setRowCount(len(indicators))
+        self.table.setHorizontalHeaderLabels(['Indicator', 'Waarde'])
+        for i, (label, _) in enumerate(indicators):
+            indicator_item = QTableWidgetItem(label)
+            indicator_item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(i, 0, indicator_item)
+            value_item = QTableWidgetItem(data.get(label, "N/A"))
+            value_item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(i, 1, value_item)
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+        self.table.horizontalHeader().setStretchLastSection(False)
+        self.table.verticalHeader().setStretchLastSection(False)
+
+    def get_agriculture_data(self, country_name, indicators):
+        try:
+            import world_bank_data as wb
+            countries = wb.get_countries()
+            df = countries[['region', 'name']].rename(columns={'name': 'country'}).loc[countries.region != 'Aggregates']
+            data = {}
+            for label, code in indicators:
+                series = wb.get_series(code, id_or_value='id', simplify_index=True, mrv=1)
+                df[label] = series
+            country_data = df[df['country'].str.lower() == country_name.lower()]
+            for label, _ in indicators:
+                if not country_data.empty:
+                    value = country_data.iloc[0][label]
+                    data[label] = f"{value:.2f}" if not pd.isna(value) else "N/A"
+                else:
+                    data[label] = "N/A"
+            return data
+        except Exception:
+            return {label: "N/A" for label, _ in indicators}
+
+
+class MinisterieVanHuisvestingApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Ministerie van Huisvesting')
+        self.setGeometry(100, 100, 1000, 600)
+        main_layout = QHBoxLayout(self)
+        left_layout = QVBoxLayout()
+        self.input_field = QLineEdit(self)
+        self.input_field.setPlaceholderText("Voer de naam van een land in")
+        self.input_field.returnPressed.connect(self.update_data)
+        left_layout.addWidget(self.input_field)
+        self.country_label = QLabel("Gekozen land: ", self)
+        self.country_label.setStyleSheet("font-weight: bold; font-size: 11pt;")
+        left_layout.addWidget(self.country_label)
+        self.table = QTableWidget(self)
+        self.table.setColumnCount(0)
+        self.table.setRowCount(0)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        self.table.verticalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        left_layout.addWidget(self.table)
+        main_layout.addLayout(left_layout)
+        self.setLayout(main_layout)
+
+    def update_data(self):
+        country_name = self.input_field.text()
+        self.country_label.setText(f"Gekozen land: {country_name}")
+        indicators = [
+            ("Stedelijke Bevolking (% van Totale Bevolking)", "SP.URB.TOTL.IN.ZS"),
+            ("Aantal Woningen per 1000 inwoners", None),
+            ("Gemiddelde Huishoudgrootte", None),
+        ]
+        data = self.get_housing_data(country_name, indicators)
+        self.table.setColumnCount(2)
+        self.table.setRowCount(len(indicators))
+        self.table.setHorizontalHeaderLabels(['Indicator', 'Waarde'])
+        for i, (label, _) in enumerate(indicators):
+            indicator_item = QTableWidgetItem(label)
+            indicator_item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(i, 0, indicator_item)
+            value_item = QTableWidgetItem(data.get(label, "N/A"))
+            value_item.setTextAlignment(Qt.AlignCenter)
+            self.table.setItem(i, 1, value_item)
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+        self.table.horizontalHeader().setStretchLastSection(False)
+        self.table.verticalHeader().setStretchLastSection(False)
+
+    def get_housing_data(self, country_name, indicators):
+        try:
+            import world_bank_data as wb
+            countries = wb.get_countries()
+            df = countries[['region', 'name']].rename(columns={'name': 'country'}).loc[countries.region != 'Aggregates']
+            data = {}
+            for label, code in indicators:
+                if code:
+                    series = wb.get_series(code, id_or_value='id', simplify_index=True, mrv=1)
+                    df[label] = series
+            country_data = df[df['country'].str.lower() == country_name.lower()]
+            for label, code in indicators:
+                if code and not country_data.empty:
+                    value = country_data.iloc[0][label]
+                    data[label] = f"{value:.2f}" if not pd.isna(value) else "N/A"
+                elif not code:
+                    data[label] = "N/A"  # Placeholder for unavailable data
+                else:
+                    data[label] = "N/A"
+            return data
+        except Exception:
+            return {label: "N/A" for label, _ in indicators}
 
 
 if __name__ == '__main__':
