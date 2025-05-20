@@ -176,6 +176,3 @@ class CountryInfoApp(QWidget):
         except Exception as e:
             self.infoDisplay.append(f"\nFout bij het weergeven van de kaart: {str(e)}")
 
-def get_translated_country_name(self):
-    countryNameDutch = self.countryInput.text()
-    return self.country_map.get_country_name(countryNameDutch)

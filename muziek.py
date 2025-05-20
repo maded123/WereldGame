@@ -9,10 +9,17 @@ import pygame
 pygame.mixer.init()
 
 # De map waarin de muziekbestanden staan
-muziek_map = r"C:\Users\maded\PycharmProjects\EdwinsEpicGame\Muziek"
+muziek_map = os.path.join(os.path.dirname(__file__), "Muziek")
 
 # Een lijst maken van alle muziekbestanden in de opgegeven map
-muziek_bestanden = [os.path.join(muziek_map, bestand) for bestand in os.listdir(muziek_map) if bestand.endswith('.mp3') or bestand.endswith('.wav')]
+if os.path.isdir(muziek_map):
+    muziek_bestanden = [
+        os.path.join(muziek_map, bestand)
+        for bestand in os.listdir(muziek_map)
+        if bestand.lower().endswith((".mp3", ".wav"))
+    ]
+else:
+    muziek_bestanden = []
 
 # Controleer of er muziekbestanden zijn gevonden
 if not muziek_bestanden:
