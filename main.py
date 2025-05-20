@@ -5,6 +5,9 @@ from Country_Info import CountryInfoApp  # Zorg ervoor dat je deze klasse hebt g
 from Sunplot_GDP import WereldGDPApp  # Zorg ervoor dat je deze klasse hebt gedefinieerd
 from Sunplot_wereldpopulatie import WereldPopulatieApp  # Importeer de WereldPopulatieApp klasse
 from Ministerie_Van_Economische_Zaken import MinisterieVanEconomischeZakenApp  # Zorg ervoor dat je deze klasse hebt gedefinieerd
+from Ministerie_Van_Leger import MinisterieVanLegerApp
+from Ministerie_Van_Landbouw import MinisterieVanLandbouwApp
+from Ministerie_Van_Huisvesting import MinisterieVanHuisvestingApp
 from muziek import MuziekSpeler  # Zorg ervoor dat je deze klasse hebt gedefinieerd
 
 class MainApp(QMainWindow):
@@ -30,8 +33,22 @@ class MainApp(QMainWindow):
         country_info_app = CountryInfoApp()
         tab_widget.addTab(country_info_app, "Country Info")
 
+        # Tab voor het kiezen van een land
+        from Country_Selector import CountrySelector
+        country_selector = CountrySelector()
+        tab_widget.addTab(country_selector, "Kies Land")
+
         ministerie_economische_zaken_app = MinisterieVanEconomischeZakenApp()
         tab_widget.addTab(ministerie_economische_zaken_app, "Economische Zaken")
+
+        ministerie_leger_app = MinisterieVanLegerApp()
+        tab_widget.addTab(ministerie_leger_app, "Leger")
+
+        ministerie_landbouw_app = MinisterieVanLandbouwApp()
+        tab_widget.addTab(ministerie_landbouw_app, "Landbouw")
+
+        ministerie_huisvesting_app = MinisterieVanHuisvestingApp()
+        tab_widget.addTab(ministerie_huisvesting_app, "Huisvesting")
 
         wereld_gdp_app = WereldGDPApp()
         tab_widget.addTab(wereld_gdp_app, "Wereld GDP")
