@@ -1,4 +1,3 @@
-
 import os
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QDial, QMessageBox
 from PyQt5.QtCore import QTimer, Qt
@@ -9,7 +8,7 @@ import pygame
 pygame.mixer.init()
 
 # De map waarin de muziekbestanden staan
-muziek_map = r"C:\Users\maded\PycharmProjects\EdwinsEpicGame\Muziek"
+muziek_map = os.path.join(os.path.dirname(__file__), 'Muziek')
 
 # Een lijst maken van alle muziekbestanden in de opgegeven map
 muziek_bestanden = [os.path.join(muziek_map, bestand) for bestand in os.listdir(muziek_map) if bestand.endswith('.mp3') or bestand.endswith('.wav')]
