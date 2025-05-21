@@ -1,18 +1,15 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QTabWidget
 from PyQt5.QtGui import QPalette, QBrush, QPixmap, QColor
-from Country_Info import CountryInfoApp  # Zorg ervoor dat je deze klasse hebt gedefinieerd
-from Sunplot_GDP import WereldGDPApp  # Zorg ervoor dat je deze klasse hebt gedefinieerd
-from Sunplot_wereldpopulatie import WereldPopulatieApp  # Importeer de WereldPopulatieApp klasse
-<<<<<<< Updated upstream
-from Ministerie_Van_Economische_Zaken import MinisterieVanEconomischeZakenApp  # Zorg ervoor dat je deze klasse hebt gedefinieerd
+from Country_Info import CountryInfoApp
+from Sunplot_GDP import WereldGDPApp
+from Sunplot_wereldpopulatie import WereldPopulatieApp
+from Ministerie_Van_Economische_Zaken import MinisterieVanEconomischeZakenApp
 from Ministerie_Van_Leger import MinisterieVanLegerApp
 from Ministerie_Van_Landbouw import MinisterieVanLandbouwApp
 from Ministerie_Van_Huisvesting import MinisterieVanHuisvestingApp
-=======
-from Ministerie_Van_Economische_Zaken import MinisterieVanEconomischeZakenApp, MinisterieVanDefensieApp, MinisterieVanLandbouwApp, MinisterieVanHuisvestingApp  # Import the new ministeries
->>>>>>> Stashed changes
-from muziek import MuziekSpeler  # Zorg ervoor dat je deze klasse hebt gedefinieerd
+from Country_Ministries import CountryMinistries
+from muziek import MuziekSpeler
 
 class MainApp(QMainWindow):
     def __init__(self):
@@ -42,16 +39,14 @@ class MainApp(QMainWindow):
         country_selector = CountrySelector()
         tab_widget.addTab(country_selector, "Kies Land")
 
+        country_ministries = CountryMinistries()
+        tab_widget.addTab(country_ministries, "Ministeries")
+
         ministerie_economische_zaken_app = MinisterieVanEconomischeZakenApp()
         tab_widget.addTab(ministerie_economische_zaken_app, "Economische Zaken")
 
-<<<<<<< Updated upstream
         ministerie_leger_app = MinisterieVanLegerApp()
         tab_widget.addTab(ministerie_leger_app, "Leger")
-=======
-        ministerie_defensie_app = MinisterieVanDefensieApp()
-        tab_widget.addTab(ministerie_defensie_app, "Leger")
->>>>>>> Stashed changes
 
         ministerie_landbouw_app = MinisterieVanLandbouwApp()
         tab_widget.addTab(ministerie_landbouw_app, "Landbouw")
